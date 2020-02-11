@@ -320,8 +320,7 @@ static void info(int fd){
 	fprintf(stderr, "SERVER_MSG_PENDING=%d\n", waitcount);
 }
 
-
-//  send at+sbdwt, wait for READY, dump message text.
+//  send at+sbdwt, wait for READY, dump message text into modem.
 // returns 0 or err status.
 int send_text_message(char* themessage, int length, int fd){
 	unsigned char temp_buff[MAX_BUFF] = {'\0'};
@@ -344,7 +343,7 @@ int send_text_message(char* themessage, int length, int fd){
 }
 
 // takes buf, sets len and checksum, puts into MO buf on modem.
-// returns... ?
+// returns total number of message bytes written.
 //  sbdwb format:  at+sbdwb=<binary len>. modem responds READY
 //    Then send <binary> + <2 byte checksum>.
 int send_binary_data(char* buf, int fd, int len){
@@ -380,9 +379,10 @@ int send_binary_data(char* buf, int fd, int len){
 	return len2;
 }
 
-//  read text data from MO buffer on modem.
+//  read text data from MT buffer on modem.
 //  wants char* buf and fd to serial port.
 //  returns # of bytes read & puts data in char* buf.
+//  Cleans "+sbdrt:\r\n" so buf contains just the MT message.
 int get_text_data(char* buf, int fd){
 	int i;
 	int len = imu_rw("at+sbdrt\r\n", buf, fd);
@@ -444,12 +444,14 @@ int clearbufs(int instruction, int fd){
 
 void getsbdstatus(int fd){
 	// at+sbdsx
-	// modem returns "+SBDS: mflag, momsn, mtflag, mtmsn"
+	// modem returns "+SBDSX: mflag, momsn, mtflag, mtmsn, raflag, msg_wait"
 	//   mtmsn will be -1 if no message pending send.
 	//   flags will be 1 if message pending send/receive
 	//    or 0 if no message pending.
 	//   m*msn is msn# of pending message (out or in)
 	//   momsn is outbound, mtmsn is inbound.
+	//   raflag is ring alert (not really needed on 9602).
+	//   msg_wait is how many inbound messages are queued in the cloud.
 	int mflag, momsn, mtflag, mtmsn, raflag, msg_wait;
 	unsigned char buf[MAX_BUFF] = { '\0' };
 	mflag = momsn = mtflag = mtmsn = raflag = msg_wait = 0;
@@ -551,9 +553,8 @@ int test_function(int fd){
 	// at+sbdwb=<msg len>
 
 	//  While the MO buffer can be up to 340 bytes, the MT buffer
-	//  is smaller at 270, so for testing I'm going to use 270
-	//  bytes.
-
+	//  is supposedly smaller at 270 according to some documentation.
+	
 	// Even in quiet mode (q1), the modem will respond READY.
     write_to_imu(wbstring, strlen(wbstring), fd);
     i = read_from_imu(buf, fd);
@@ -600,24 +601,14 @@ int test_function(int fd){
 	sscanf(buf, "SBDTC: Outbound SBD Copied to Inbound SBD: size =%d\n", &len2);
 	fprintf(stderr, "%s\n", buf);
 
-	// This fails in a lockup scenario, I'll need to switch to a more direct read
-	//  to figure out what's going wrong.
-//	len = imu_rw("at+sbdrb\r\n", buf, fd);
 	fprintf(stderr, "------------------------------------------------------------------------\n");
-	fprintf(stderr, "Sending read-binary request to modem.\n");
-//	len = write_to_imu("at+sbdrb\r\n", strlen("at+sbdrb\r\n"), fd);
 
 	// erase buf before read.
 	for(i=0; i==MAX_BUFF; i++)
 		buf[i] = '\0';
 
 	fprintf(stderr, "Reading binary data from modem.\n");
-//	len2 = read_from_imu(buf, fd);
 	len=read_binary_from_imu(buf, fd);
-
-	// buf should now contain a hunk of bytes.  buf[0-1]
-	//  should be the message length.  buf[len-1..len-0]
-	//  should contain the message checksum.
 
 	fprintf(stderr, "Read %d bytes.\n", len);
 
