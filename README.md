@@ -1,10 +1,8 @@
 # ts-iridium
 Sample code for use with the TS-IRIDIUM satellite communications peripheral.
 
+Portions of the AT command set herein belong to IRIDIUM.
 
----------------------
-License:  This software is offered under the Technologic Systems Standard License:
+The source code itself is free to use and modify by customers of Technologic Systems' Iridium-based products.
 
-We don't mind what you do with it so long as you're one of our customers.
-
-The software is provided without warranty of any kind.
+This source code is provided without any warranties whatsoever.
