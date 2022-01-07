@@ -24,7 +24,7 @@
 //  ;              mode 0=disable 1=enable.  See documentation.
 //  ;+CRIS 		Ring Indication Status +CRIS[X]:<tri>,<sri>,[X]<timestamp> sri: 0=no ring, 1=ring
 //  ;+CSQ 		Signal Quality  +CSQ: 0-5 signal quality rating.  0=none 5=best
-//  ;+CULK=n		Unlock <should NEVER need this on a 9602 from Technologic Systems / contact sat provider>
+//  ;+CULK=n		Unlock <should NEVER need this on a 9602 from embeddedTS / contact sat provider>
 //  ;+CULK?		Query if unlock is needed.  0 = not locked.
 //  ;+GEMON 	xxx	See Documentation.  Estimate of charge from +5V displayed in microamp hours.  26 bit number
 //  ;             rolls over after ~67 Ah.  Presset with at+gemon=n where n is the desired start value (typ 0).

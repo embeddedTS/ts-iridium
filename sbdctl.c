@@ -1,5 +1,5 @@
 //sbdctl.c
-// c. 2020, Technologic Systems
+// c. 2020, embeddedTS
 //  For example use only.
 //  Written by Michael D Peters
 //
@@ -10,7 +10,7 @@
 //  with any SBC + IRIDIUM combination simply by providing it with a valid serial port
 //  using the -p <port> option.
 //
-// This program is licensed for free use to any Technologic Systems customer, and is
+// This program is licensed for free use to any embeddedTS customer, and is
 //  provided with no warranties at all.
 //
 // Definitions:
@@ -620,7 +620,7 @@ int test_function(int fd){
 static void usage(char* myname){
 	fprintf(stderr, 
 		"Usage: %s [options] ... \n"
-		"Technologic Systems SBD Control Utility\n"
+		"embeddedTS SBD Control Utility\n"
 		"Status output goes to stderr.  All other IO uses stdin/stdout.\n"
 		"Options are executed in the order given on the command line.\n"
 		"For example:\n"
